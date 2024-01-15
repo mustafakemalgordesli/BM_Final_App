@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "570171874836",
+    "project_id": "bmfinal-55e50",
+    "storage_bucket": "bmfinal-55e50.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570171874836:android:61c3a005e2b4f042c85101",
+        "android_client_info": {
+          "package_name": "tr.com.mustafagordesli.finalapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfvY_BY8onEiFHrf8-mvL0Vm_oWIuNdKI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
