@@ -72,7 +72,7 @@ public class LabelFragment extends Fragment {
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
-                                Toast.makeText(getActivity(), "Label eklendi", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getActivity(), "Label eklendi", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {

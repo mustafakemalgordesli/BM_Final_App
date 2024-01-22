@@ -3,6 +3,7 @@ package tr.com.mustafagordesli.finalapp.ui.home;
 import static android.app.Activity.RESULT_OK;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -48,15 +51,17 @@ import java.util.UUID;
 
 import tr.com.mustafagordesli.finalapp.databinding.FragmentHomeBinding;
 import tr.com.mustafagordesli.finalapp.ui.Label;
+import android.Manifest;
 
 public class HomeFragment extends Fragment {
-
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
     private FragmentHomeBinding binding;
-    int ResultImage = 1;
+    int ResultImage = 2;
     List<String> labelList = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
 
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -88,16 +93,33 @@ public class HomeFragment extends Fragment {
         btnSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(
-                        Intent.ACTION_PICK,
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                );
-                startActivityForResult(i, ResultImage);
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                } else {
+                    startGalleryIntent();
+                }
             }
         });
 
 
         return root;
+    }
+
+    private void startGalleryIntent() {
+        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(i, ResultImage);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // İzin verildi, galeri intent'ini başlat
+                startGalleryIntent();
+            } else {
+                // İzin reddedildi, kullanıcıya uygun bir geri bildirimde bulunabilirsiniz
+            }
+        }
     }
 
     private List<String> getSelectedLabels() {
@@ -115,12 +137,13 @@ public class HomeFragment extends Fragment {
         return selectedLabels;
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == ResultImage && resultCode == RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
-            String [] filePathColumn = {MediaStore.Images.Media.DATA};
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
             Cursor cursor = getActivity().getContentResolver().query(selectedImage,
                     filePathColumn, null,null,null);
@@ -130,7 +153,7 @@ public class HomeFragment extends Fragment {
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
 
-            ImageView imageView = binding.imageView;
+            ImageView imageView = binding.image;
             imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
 
             Button share = binding.btnShare;
